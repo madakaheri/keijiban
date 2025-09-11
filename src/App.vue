@@ -1,6 +1,6 @@
 <script setup>
 	import {ref, computed} from 'vue';
-	import {feeds, topics, trendingCommunities} from './data/redditCategories.js';
+	import {feeds, topics, trendingCommunities} from './data/categories.js';
 
 	const drawer = ref(true);
 	const menu = ref(false);
@@ -22,10 +22,19 @@
 <template>
 	<v-app>
 		<v-app-bar
-			density="comfortable"
 			flat
+			class="border-b"
 		>
-			<v-menu
+			<v-avatar
+				@click="drawer = !drawer"
+				size="32"
+				class="ml-4"
+				color="grey-darken-3"
+				image="https://2.gravatar.com/avatar/d492b444772bdc1b50fa24aa3bea2bb8018514702aa8fb4ae1cd6bebe99fad14?size=256&d=initials"
+			/>
+			<!-- <v-app-bar-nav-icon @click="drawer = !drawer" /> -->
+			<h1 class="text-h6 ml-4">Keijiban</h1>
+			<!-- <v-menu
 				v-model="menu"
 				:close-on-content-click="false"
 				location="bottom"
@@ -110,16 +119,17 @@
 						</v-col>
 					</v-row>
 				</v-card>
-			</v-menu>
+			</v-menu> -->
 
 			<v-spacer />
 
 			<v-text-field
 				v-model="search"
 				prepend-inner-icon="mdi-magnify"
-				variant="solo"
+				variant="outlined"
 				density="comfortable"
 				hide-details
+				rounded
 				placeholder="Search topics"
 				class="mx-4"
 				style="max-width: 420px"
@@ -129,16 +139,12 @@
 				icon="mdi-bell-outline"
 				variant="text"
 			/>
-			<v-btn
-				icon="mdi-account-circle"
-				variant="text"
-			/>
 		</v-app-bar>
 
 		<v-navigation-drawer
 			v-model="drawer"
 			width="280"
-			permanent
+			location="left"
 		>
 			<v-list
 				nav
@@ -163,31 +169,63 @@
 					:active="current.key === t.key"
 					@click="selectCategory(t)"
 				/>
+				<v-divider class="my-2" />
+				<v-list-subheader>Trending Communities</v-list-subheader>
+				<v-list-item
+					v-for="c in trendingCommunities"
+					:key="c.key"
+					:prepend-icon="c.icon"
+					:title="c.label"
+					:active="current.key === c.key"
+					@click="selectCategory(c)"
+				/>
+			</v-list>
+		</v-navigation-drawer>
+
+		<v-navigation-drawer
+			width="280"
+			location="right"
+			permanent
+		>
+			<v-list
+				nav
+				density="comfortable"
+			>
+				<v-list-subheader>Stocks</v-list-subheader>
+				<div class="mt-n4">
+					<v-card
+						v-for="n in 5"
+						:key="n"
+						class="mt-4"
+					>
+						<v-img
+							src="https://picsum.photos/800/300?random={{ n }}"
+							aspect-ratio="16/9"
+							eager
+						/>
+						<v-card-title>Sample post {{ n }} in {{ current.label }}</v-card-title>
+						<v-card-text>
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vitae turpis.
+						</v-card-text>
+					</v-card>
+				</div>
 			</v-list>
 		</v-navigation-drawer>
 
 		<v-main>
-			<v-toolbar
-				color="transparent"
-				flat
+			<v-container
+				class="mt-n4"
+				style="max-width: 600px"
 			>
-				<v-container>
-					<div class="text-h5 d-flex align-center">
-						<v-icon class="mr-2">{{ current.icon }}</v-icon>
-						<span>{{ current.label }}</span>
-					</div>
-				</v-container>
-			</v-toolbar>
-			<v-divider />
-			<v-container class="mt-n4">
 				<v-card
-					v-for="n in 6"
+					v-for="n in 15"
 					:key="n"
 					class="mt-4"
 				>
 					<v-img
 						src="https://picsum.photos/800/300?random={{ n }}"
 						aspect-ratio="16/9"
+						eager
 					/>
 					<v-card-title>Sample post {{ n }} in {{ current.label }}</v-card-title>
 					<v-card-text>
@@ -196,13 +234,13 @@
 					<v-card-actions>
 						<v-btn
 							variant="text"
-							prepend-icon="mdi-arrow-up-bold"
-							>Upvote</v-btn
+							prepend-icon="mdi-bookmark"
+							>Bookmark</v-btn
 						>
 						<v-btn
 							variant="text"
-							prepend-icon="mdi-comment-outline"
-							>Comment</v-btn
+							prepend-icon="mdi-bag-personal"
+							>Stock</v-btn
 						>
 						<v-spacer />
 						<v-btn
